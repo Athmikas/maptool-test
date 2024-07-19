@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Geocoding with Leaflet and Nominatim</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.4/leaflet-search.min.css" />
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        body, html {
+            font-family: Futura;
+            background-color: #f3f4f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-container {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+        .map-container {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+            position: relative;
+            border-left: 2px solid #ccc;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 0 10px 10px 0;
+        }
+        #address-panel {
+            height: 100%;
+            width: 40%;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+        .description-text {
+            margin-bottom: 10px; /* Added spacing between description text and address panel */
+        }
+        .address-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-start;
+        }
+        .address-display {
+            width: 100%;
+            padding: 12px;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .county-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .county-info-table td {
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+            background-color: #ffffff;
+        }
+        .county-info-table tr:first-child td {
+            border-top: none;
+        }
+        .county-info-table tr:last-child td {
+            border-bottom: none;
+        }
+        #overlay {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 20px 40px;
+            border-radius: 5px;
+            font-size: 1.5em;
+            text-align: center;
+            z-index: 1000;
+        }
+        .leaflet-control-search {
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .leaflet-control-search .search-input {
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            height: 48px;
+            padding: 0 50px 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .leaflet-control-search .search-button {
+            background: url('https://img.icons8.com/ios-filled/50/000000/search.png') no-repeat;
+            background-size: contain;
+            height: 30px;
+            width: 30px;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+        }
+        .leaflet-control-search .search-cancel {
+            display: none;
+        }
+        .leaflet-control-search .search-tooltip {
+            max-height: calc(100vh - 90px);
+            width: 100%;
+        }
+        .leaflet-control-search .search-tip {
+            background-color: white;
+            border-radius: 0;
+            border: 1px solid #ddd;
+            border-top-width: 0;
+            color: #333;
+            line-height: 48px;
+            margin: 0;
+            overflow: hidden;
+            padding: 0 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .leaflet-control-search .search-tip:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .leaflet-control-search .search-tip:active {
+            background-color: #e0e0e0;
+        }
+        #checkbox-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            width: 250px;
+            background-color: #e9ecef;
+            padding: 10px;
+            margin-right: 10px;
+        }
+        #checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+            height: 1.5em;
+            width: 1.5em;
+        }
+        #checkbox-container label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        #county-select {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            height: 2.5em;
+        }
+        #legend {
+            background: white;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        #legend h4 {
+            margin: 0 0 5px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="checkbox-container">
+            <select id="county-select">
+                <option value="">Select County</option>
+            </select>
+            <label><input type="checkbox" id="toggle-county" checked> County Boundaries</label>
+            <label><input type="checkbox" id="toggle-legend" checked> Show Precincts</label>
+            <label><input type="checkbox" id="toggle-legislative"> Legislative Boundaries</label>
+            <div id="legend" style="display:block;">
+                <h4>Legend</h4>
+                <div id="legend-items" class="legend-items">
+                    <!-- Legend items will be inserted here -->
+                </div>
+            </div>
+        </div>
+        <div class="map-container">
+            <div id="map">
+                <div id="overlay">Click on Map to Estimate Precinct and Address Info</div>
+            </div>
+        </div>
+        <div id="address-panel">
+            <h2 style="text-align: center;">North Dakota Voting Map Tool</h2>
+            <p class="description-text">By placing a marker on the map, you can estimate the address of that location and retrieve precinct, polling location, and county auditor information. Note this site is work in progress.</p>
+            <div class="address-content-wrapper">
+                <div id="address-display" class="address-display">Address will appear here.</div>
+                <h3>County Auditor Details</h3>
+                <table id="county-info-table" class="county-info-table">
+                    <tr><td><strong>Auditor</strong></td><td>-</td></tr>
+                    <tr><td><strong>Phone/Fax/Email</strong></td><td>-</td></tr>
+                    <tr><td><strong>Address</strong></td><td>-</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.4/leaflet-search.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        var map = L.map('map').setView([46.8772, -96.7898], 7); // Centered in Fargo, North Dakota with initial zoom level 7
+
+        var baseLayers = {
+            "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+            }),
+            "Topographic": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
+                maxZoom: 17,
+            })
+        };
+
+        baseLayers["OpenStreetMap"].addTo(map);
+        L.control.layers(baseLayers).addTo(map);
+
+        var addressDisplay = document.getElementById('address-display');
+        var countyInfoTable = document.getElementById('county-info-table');
+        var overlay = document.getElementById('overlay');
+        var marker;
+        var cancelTokenSource = null;
+        var precinctLayer;
+        var countyLayer;
+        var legislativeLayer;
+        var precinctData;
+        var countyData;
+        var legislativeData;
+        var highlightedCountyLayer;
+        var precinctLayers = [];
+        var highlightedMarkers = [];
+        var precinctMarkerMap = {};
+        var legend = L.control({ position: 'bottomright' });
+        var countyInfo = {};
+
+        var searchControl = new L.Control.Search({
+            url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
+            jsonpParam: 'json_callback',
+            propertyName: 'display_name',
+            propertyLoc: ['lat', 'lon'],
+            marker: false,
+            autoCollapse: true,
+            autoType: false,
+            minLength: 2,
+            position: 'topright'
+        });
+
+        searchControl.on('search:locationfound', function (e) {
+            placeMarker(e.latlng);
+            reverseGeocode(e.latlng.lat, e.latlng.lng);
+        });
+
+        map.addControl(searchControl);
+
+        map.on('click', function (e) {
+            if (!navigator.onLine) {
+                displayMessage("You're Offline. Cannot Fetch Your Address.");
+                return;
+            }
+
+            overlay.style.display = 'none';
+            placeMarker(e.latlng);
+            if (cancelTokenSource) {
+                cancelTokenSource.cancel();
+            }
+
+            displayMessage("Fetching Address...");
+            cancelTokenSource = axios.CancelToken.source();
+            reverseGeocode(e.latlng.lat, e.latlng.lng, cancelTokenSource.token);
+        });
+
+        function placeMarker(latlng) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            setPlaceholderAddress(); // Set placeholders when fetching address
+            var lat = latlng.lat.toFixed(5);
+            var lng = latlng.lng.toFixed(5);
+            var precinct = getPrecinct(lat, lng);
+            var district = getLegislativeDistrict(lat, lng);
+            marker = L.marker(latlng).addTo(map)
+                .bindPopup("<b>Precinct:</b> " + (precinct ? precinct : "N/A") + "<br>" + 
+                           "<b>District:</b> " + (district ? district : "N/A") + "<br><br>" +
+                           "Latitude: " + lat + "<br>Longitude: " + lng)
+                .openPopup();
+
+            if (map.getZoom() < 10) { // Only zoom in if the current zoom level is less than 10
+                map.setView(latlng, 10);
+            } else {
+                map.setView(latlng);
+            }
+
+            var county = getCounty(lat, lng);
+            if (county) {
+                document.getElementById('county-select').value = county;
+                if (document.getElementById('toggle-county').checked) {
+                        highlightCounty(county);
+                }
+                displayCountyInfo(county);
+                highlightMarkersForPrecinctInCounty(precinct, county);
+  
+            } else {
+                document.getElementById('county-select').value = "";
+                clearCountyInfo();
+            }
+        }
+
+        function getPrecinct(lat, lng) {
+            var point = turf.point([lng, lat]);
+            var precinct = null;
+            turf.featureEach(precinctData, function (currentFeature) {
+                if (turf.booleanPointInPolygon(point, currentFeature)) {
+                    precinct = currentFeature.properties.PRECINCT_NAME;
+                }
+            });
+            return precinct;
+        }
+
+        function getCounty(lat, lng) {
+            var point = turf.point([lng, lat]);
+            var county = null;
+            turf.featureEach(countyData, function (currentFeature) {
+                if (turf.booleanPointInPolygon(point, currentFeature)) {
+                    county = currentFeature.properties.NAME;
+                }
+            });
+            return county;
+        }
+
+        function getLegislativeDistrict(lat, lng) {
+            var point = turf.point([lng, lat]);
+            var district = null;
+            turf.featureEach(legislativeData, function (currentFeature) {
+                if (turf.booleanPointInPolygon(point, currentFeature)) {
+                    district = currentFeature.properties.DISTRICT;
+                }
+            });
+            return district;
+        }
+
+        function highlightCounty(countyName) {
+            if (highlightedCountyLayer) {
+                map.removeLayer(highlightedCountyLayer);
+            }
+            var selectedFeature = countyData.features.find(function (feature) {
+                return feature.properties.NAME === countyName;
+            });
+            if (selectedFeature) {
+                highlightedCountyLayer = L.geoJson(selectedFeature, {
+                    style: function () {
+                        return {
+                            color: "#ff0000",
+                            weight: 5,
+                            opacity: 1,
+                            fillOpacity: 0.1,
+                            fillColor: '#ff0000'
+                        };
+                    }
+                }).addTo(map);
+
+                // Show precincts only if the checkbox is checked
+                if (document.getElementById('toggle-legend').checked) {
+                    showPrecinctsForCounty(countyName);
+                }
+            }
+        }
+
+        function showPrecinctsForCounty(countyName) {
+            if (precinctLayers.length > 0) {
+                precinctLayers.forEach(function (layer) {
+                    map.removeLayer(layer);
+                });
+                precinctLayers = [];
+            }
+
+            var colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
+            var precinctColorMap = {};
+            var colorIndex = 0;
+
+            var county = countyData.features.find(function (feature) {
+                return feature.properties.NAME === countyName;
+            });
+
+            if (!county) return;
+
+            precinctData.features.forEach(function (feature) {
+                if (turf.booleanPointInPolygon(turf.centroid(feature), county)) {
+                    var precinctName = feature.properties.PRECINCT_NAME;
+                    if (!precinctColorMap[precinctName]) {
+                        precinctColorMap[precinctName] = colors[colorIndex % colors.length];
+                        colorIndex++;
+                    }
+
+                    var layer = L.geoJson(feature, {
+                        style: function () {
+                            return {
+                                color: precinctColorMap[precinctName],
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.2,
+                                fillColor: precinctColorMap[precinctName]
+                            };
+                        }
+                    }).addTo(map);
+                    precinctLayers.push(layer);
+                }
+            });
+
+            updateLegend(precinctColorMap);
+        }
+
+        function updateLegend(precinctColorMap) {
+            var legendItemsDiv = document.getElementById('legend-items');
+            legendItemsDiv.innerHTML = ''; // Clear previous legend items
+            for (var precinctName in precinctColorMap) {
+                legendItemsDiv.innerHTML += '<div class="legend-item"><div class="legend-color" style="background:' + precinctColorMap[precinctName] + '"></div>' + precinctName + '</div>';
+            }
+        }
+
+        function reverseGeocode(lat, lng, cancelToken) {
+            var url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1`;
+
+            axios.get(url, { cancelToken })
+                .then(function (response) {
+                    var address = response.data;
+                    displayAddress(address);
+                    displayMessage("Click on Map to Estimate Precinct and Address Info");
+                })
+                .catch(function (error) {
+                    if (!axios.isCancel(error)) {
+                        displayMessage("Error occurred during reverse geocoding.");
+                    }
+                });
+        }
+
+        function displayAddress(address) {
+            var components = [
+                address.address.house_number,
+                address.address.road,
+                address.address.city || address.address.village || address.address.town,
+                address.address.state,
+                address.address.postcode
+            ];
+
+            addressDisplay.textContent = components.filter(Boolean).join(', ') || 'Address not found';
+        }
+
+        function clearAddress() {
+            addressDisplay.textContent = '';
+        }
+
+        function setPlaceholderAddress() {
+            addressDisplay.textContent = 'Fetching address...';
+        }
+
+        function displayMessage(message) {
+            overlay.textContent = message;
+            overlay.style.display = 'flex';
+        }
+
+        function displayCountyInfo(countyName) {
+            var info = countyInfo[countyName];
+            if (info) {
+                countyInfoTable.rows[0].cells[1].textContent = info.Auditor || '-';
+                countyInfoTable.rows[1].cells[1].textContent = info['Phone/Fax/Email'] || '-';
+                countyInfoTable.rows[2].cells[1].textContent = info.Address || '-';
+            } else {
+                clearCountyInfo();
+            }
+        }
+
+        function clearCountyInfo() {
+            for (var i = 0; i < countyInfoTable.rows.length; i++) {
+                countyInfoTable.rows[i].cells[1].textContent = '-';
+            }
+        }
+
+        function highlightMarkersForPrecinctInCounty(precinct, county) {
+            clearHighlightedMarkers();
+            if (precinctMarkerMap[precinct]) {
+                precinctMarkerMap[precinct].forEach(function (marker) {
+                    if (marker.options.county === county) {
+                        marker.setIcon(redIcon);
+                        highlightedMarkers.push(marker);
+                    }
+                });
+            }
+        }
+
+        function clearHighlightedMarkers() {
+            highlightedMarkers.forEach(function (marker) {
+                marker.setIcon(pushPinIcon);
+            });
+            highlightedMarkers = [];
+        }
+
+        function loadCountyInfo() {
+            Papa.parse('data/County_Information.csv', {
+                download: true,
+                header: true,
+                complete: function (results) {
+                    results.data.forEach(function (row) {
+                        countyInfo[row.County] = row;
+                    });
+                    populateCountySelect(results.data);
+                }
+            });
+        }
+
+        function populateCountySelect(data) {
+            var select = document.getElementById('county-select');
+            data.forEach(function (row) {
+                var option = document.createElement('option');
+                option.value = row.County;
+                option.textContent = row.County;
+                select.appendChild(option);
+            });
+        }
+
+        loadCountyInfo();
+
+       
+        $.ajax({
+            dataType: "json",
+            url: "data/Voting_Precincts.geojson",
+            success: function(data) {
+                precinctData = data;
+
+                document.getElementById('toggle-legend').addEventListener('change', function(e) {
+                    if (e.target.checked) {
+                        document.getElementById('legend').style.display = 'block';
+                        document.getElementById('toggle-county').checked = true;
+                        var selectedCounty = document.getElementById('county-select').value;
+                        if (selectedCounty) {
+                            showPrecinctsForCounty(selectedCounty);
+                        }
+                        countyLayer.addTo(map);
+                    } else {
+                        precinctLayers.forEach(function(layer) {
+                            map.removeLayer(layer);
+                        });
+                        precinctLayers = [];
+                        document.getElementById('legend').style.display = 'none';
+                    }
+                });
+
+                // Show precincts by default
+                document.getElementById('toggle-legend').checked = true;
+                showPrecinctsForCounty(document.getElementById('county-select').value);
+            },
+            error: function() {
+                console.error("Could not load the GeoJSON file.");
+            }
+        });
+
+        axios.get('https://services1.arcgis.com/GOcSXpzwBHyk2nog/arcgis/rest/services/NDGISHUB_County_Boundaries/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
+            .then(function(response) {
+                countyData = response.data;
+                countyLayer = L.geoJson(countyData, {
+                    style: function() {
+                        return {
+                            color: "#ff7800",
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        layer.on('click', function(e) {
+                            var countyName = feature.properties.NAME;
+                            document.getElementById('county-select').value = countyName;
+                            highlightCounty(countyName);
+                        });
+                    }
+                }).addTo(map);
+
+                // Center map to the county layer
+                var bounds = countyLayer.getBounds();
+                map.fitBounds(bounds);
+
+                // Populate county select dropdown
+                populateCountySelect(countyData.features);
+
+                // Toggle County GeoJSON layer
+                document.getElementById('toggle-county').addEventListener('change', function(e) {
+                    if (e.target.checked || e.target.disabled) {
+                        countyLayer.addTo(map);
+                    } else {
+                        if (!document.getElementById('toggle-legend').checked) {
+                            map.removeLayer(countyLayer);
+                        }
+                        if (highlightedCountyLayer) {
+                            map.removeLayer(highlightedCountyLayer);
+                        }
+                    }
+                });
+
+                document.getElementById('county-select').addEventListener('change', function(e) {
+                    var selectedCounty = e.target.value;
+                    if (selectedCounty) {
+                        var selectedFeature = countyData.features.find(function(feature) {
+                            return feature.properties.NAME === selectedCounty;
+                        });
+                        if (selectedFeature) {
+                            var countyBounds = L.geoJson(selectedFeature).getBounds();
+                            map.fitBounds(countyBounds);
+                            highlightCounty(selectedCounty);
+                        }
+                    } else {
+                        // Zoom out to the center of the county GeoJSON
+                        map.fitBounds(bounds);
+                        if (highlightedCountyLayer) {
+                            map.removeLayer(highlightedCountyLayer);
+                        }
+                        precinctLayers.forEach(function(layer) {
+                            map.removeLayer(layer);
+                        });
+                        precinctLayers = [];
+                        document.getElementById('legend-items').innerHTML = '';
+                    }
+                });
+            })
+            .catch(function(error) {
+                console.error("Could not load the County GeoJSON file from API.", error);
+            });
+
+        // Fetch and add Legislative Boundaries GeoJSON layer from API
+        axios.get('https://services1.arcgis.com/GOcSXpzwBHyk2nog/arcgis/rest/services/NDGISHUB_Legislative_Districts/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
+            .then(function(response) {
+                legislativeData = response.data;
+                legislativeLayer = L.geoJson(legislativeData, {
+                    style: function() {
+                        return {
+                            color: "#000000",
+                            weight: 2,
+                            opacity: 1,
+                            dashArray: '5, 5',
+                            fillOpacity: 0
+                        };
+                    }
+                });
+
+                // Toggle Legislative Boundaries layer
+                document.getElementById('toggle-legislative').addEventListener('change', function(e) {
+                    if (e.target.checked) {
+                        legislativeLayer.addTo(map);
+                    } else {
+                        map.removeLayer(legislativeLayer);
+                    }
+                });
+            })
+            .catch(function(error) {
+                console.error("Could not load the Legislative Boundaries GeoJSON file from API.", error);
+            });
+
+        map.on('layeradd', function(e) {
+            if (countyLayer) {
+                countyLayer.bringToFront();
+            }
+            if (legislativeLayer) {
+                legislativeLayer.bringToFront();
+            }
+        });
+
+        // Ensure "County Boundaries" checkbox is checked and cannot be unchecked if "Show Precincts" is checked
+        document.getElementById('toggle-legend').addEventListener('change', function(e) {
+            var countyCheckbox = document.getElementById('toggle-county');
+            if (e.target.checked) {
+                countyCheckbox.checked = true;
+                countyCheckbox.disabled = true;
+            } else {
+                countyCheckbox.disabled = false;
+            }
+        });
+
+        // Ensure the initial state of "County Boundaries" checkbox
+        document.getElementById('toggle-county').checked = true;
+        document.getElementById('toggle-county').disabled = true;
+
+        var pushPinIcon = L.icon({
+            iconUrl: 'images/voting-pin_notselected.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+        });
+
+        var redIcon = L.icon({
+            iconUrl: 'images/voting-pin_selected.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+        });
+
+        // Load geocoded precinct data and add markers to the map
+        axios.get('data/updated_geocoded_precincts.json')
+            .then(function(response) {
+                var geocodedPollingLocs = response.data;
+
+                geocodedPollingLocs.forEach(function(pollingLoc) {
+                    var precinctsList = String(pollingLoc.Precinctslist).split(',').map(function(precinct) {
+                        return precinct.trim();
+                    });
+
+                    var marker = L.marker([pollingLoc.Latitude, pollingLoc.Longitude], { icon: pushPinIcon, county: pollingLoc.County }).addTo(map);
+                    marker.bindPopup(
+                        `<b>County:</b> ${pollingLoc.County}<br>` +
+                        `<b>Polling Location:</b> ${pollingLoc['PollingLocation']}<br>` +
+                        `<b>Address:</b> ${pollingLoc.Address}<br>` +
+                        `<b>City:</b> ${pollingLoc.City}<br>` +
+                        `<b>ZipCode:</b> ${pollingLoc['Zip Code']}<br>` +
+                        `<b>Polling Hours:</b> ${pollingLoc['PollingHours']}<br>` +
+                        `<b>Precincts List:</b> ${pollingLoc.Precinctslist}<br>`
+                    );
+
+                    precinctsList.forEach(function(precinct) {
+                        if (!precinctMarkerMap[precinct]) {
+                            precinctMarkerMap[precinct] = [];
+                        }
+                        precinctMarkerMap[precinct].push(marker);
+                    });
+
+                    marker.on('mouseover', function (e) {
+                        this.openPopup();
+                    });
+
+                    marker.on('mouseout', function (e) {
+                        this.closePopup();
+                    });
+                });
+            })
+            .catch(function(error) {
+                console.error("Could not load the geocoded precincts JSON file.", error);
+            });
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
