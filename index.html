@@ -121,6 +121,13 @@
         .county-info-table tr:last-child td {
             border-bottom: none;
         }
+    .data-source {
+        font-size: 0.8em; /* Small text size */
+        color: #666; /* Grey color for the text */
+        margin-top: auto; /* Push to the bottom */
+        text-align: center;
+        padding: 10px 0; /* Padding for spacing */
+    }
         #overlay {
             position: absolute;
             bottom: 10px;
@@ -274,6 +281,9 @@
                     <tr><td><strong>Address</strong></td><td></td></tr>
                 </table>
             </div>
+            <div class="data-source">
+                Data: 2024 North Dakota Secretary of State, North Dakota GIS Hub, Cass County, Nominatim Geocoding.
+            </div>
         </div>
     </div>
 
@@ -317,36 +327,37 @@
         var countyInfo = {};
 
         const panel = document.getElementById('address-panel');
-        const handle = document.querySelector('.resize-handle');
+const handle = document.querySelector('.resize-handle');
 
-        let isResizing = false;
-        let lastDownX = 0;
-        const minWidth = parseFloat(getComputedStyle(panel).minWidth);
+let isResizing = false;
+let lastDownX = 0;
+const minWidth = parseFloat(getComputedStyle(panel).minWidth);
 
-        handle.addEventListener('mousedown', (e) => {
-            isResizing = true;
-            lastDownX = e.clientX;
-            document.addEventListener('mousemove', resizePanel);
-            document.addEventListener('mouseup', stopResize);
-        });
+handle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    lastDownX = e.clientX;
+    document.addEventListener('mousemove', resizePanel);
+    document.addEventListener('mouseup', stopResize);
+});
 
-        function resizePanel(e) {
-            if (!isResizing) return;
+function resizePanel(e) {
+    if (!isResizing) return;
 
-            const deltaX = e.clientX - lastDownX;
-            const newWidth = panel.offsetWidth + deltaX;
+    const deltaX = e.clientX - lastDownX;
+    const newWidth = panel.offsetWidth - deltaX;
 
-            // Ensure the new width does not go below the minWidth
-            if (newWidth >= minWidth) {
-                panel.style.width = `${newWidth}px`;
-            }
-        }
+    // Ensure the new width does not go below the minWidth
+    if (newWidth >= minWidth) {
+        panel.style.width = `${newWidth}px`;
+    }
+}
 
-        function stopResize() {
-            isResizing = false;
-            document.removeEventListener('mousemove', resizePanel);
-            document.removeEventListener('mouseup', stopResize);
-        }
+function stopResize() {
+    isResizing = false;
+    document.removeEventListener('mousemove', resizePanel);
+    document.removeEventListener('mouseup', stopResize);
+}
+
 
         var searchControl = new L.Control.Search({
             url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
@@ -511,9 +522,9 @@
                         style: function () {
                             return {
                                 color: precinctColorMap[precinctName],
-                                weight: 2,
+                                weight: 1,
                                 opacity: 1,
-                                fillOpacity: 0.6,
+                                fillOpacity: 0.43,
                                 fillColor: precinctColorMap[precinctName]
                             };
                         }
@@ -558,7 +569,7 @@
                 address.address.postcode
             ];
             addressDisplay.innerHTML = components.filter(Boolean).length > 0 
-    ? '<strong style="color: #777;">Address Estimate:</strong><br>' + components.filter(Boolean).join(', ') 
+    ? '<span style="color: #666; font-weight: 500;">Address Estimate:</span><br>' + components.filter(Boolean).join(', ') 
     : 'Address not found';
 
         }
@@ -797,14 +808,14 @@
 
         var pushPinIcon = L.icon({
             iconUrl: 'images/voting-pin_notselected.png',
-            iconSize: [35, 55],
+            iconSize: [25, 30],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
         });
 
         var redIcon = L.icon({
             iconUrl: 'images/voting-pin_selected.png',
-            iconSize: [35, 55],
+            iconSize: [25, 30],
             iconAnchor: [12, 35],
             popupAnchor: [1, -34],
         });
@@ -828,7 +839,7 @@ axios.get('data/updated_geocoded_precincts.json')
                 `<b>Polling Location:</b> ${pollingLoc['PollingLocation']}<br>` +
                 `<b>Address:</b> ${pollingLoc.Address}<br>` +
                 `<b>City:</b> ${pollingLoc.City}<br>` +
-                `<b>ZipCode:</b> ${pollingLoc['Zip Code']}<br>` +
+                `<b>Zip Code:</b> ${pollingLoc['ZipCode']}<br>` +
                 `<b>Polling Hours:</b> ${pollingLoc['PollingHours']}<br>` +
                 `<b>Precincts List:</b> ${pollingLoc.Precinctslist}<br>`
             );
@@ -870,6 +881,9 @@ function togglePollingLocations(show) {
     </script>
 </body>
 </html>
+
+
+
 
 
 
