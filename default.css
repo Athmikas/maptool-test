@@ -35,16 +35,15 @@ body, html {
     flex-direction: column;
     position: relative;
     box-sizing: border-box;
-    min-width: 25%; /* Minimum width for usability */
-    max-width: 33%; /* Maximum width of 30% */
-    width: 33%; /* Start width at 30% */
+    min-width: 25%; 
+    max-width: 33%; 
+    width: 33%;
 }
 
-/* Style for the resize handle */
 .resize-handle {
-    width: 10px; /* Wider area for easier grabbing */
-    background-color: transparent; /* Grey background for the handle */
-    cursor: ew-resize; /* Cursor indicating horizontal resizing */
+    width: 10px; 
+    background-color: transparent; 
+    cursor: ew-resize; 
     position: absolute;
     top: 0;
     left: 0;
@@ -55,25 +54,24 @@ body, html {
     align-items: center;
 }
 
-/* Inner lines of the resize handle */
 .resize-handle::before,
 .resize-handle::after {
     content: '';
     display: block;
     width: 2px;
-    height: 50px; /* Length of the lines */
-    background-color: #aaa; /* Color of the lines */
-    margin: 0 2px; /* Space between the lines */
+    height: 50px; 
+    background-color: #aaa; 
+    margin: 0 2px; 
 }
 .description-text {
-    margin-bottom: 10px; /* Added spacing between description text and address panel */
+    margin-bottom: 10px; 
 }
 .address-content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow-x: hidden; /* Prevent horizontal overflow */
+    overflow-x: hidden; 
 }
 .address-display {
     width: 100%;
@@ -89,7 +87,7 @@ body, html {
     border-collapse: collapse;
     margin-bottom: 20px;
     display: block;
-    overflow-x: auto; /* Enable horizontal scrolling for the table itself */
+    overflow-x: auto; 
 }
 
 .county-info-table td {
@@ -108,11 +106,11 @@ body, html {
     border-bottom: none;
 }
 .data-source {
-font-size: 0.8em; /* Small text size */
-color: #666; /* Grey color for the text */
-margin-top: auto; /* Push to the bottom */
+font-size: 0.8em; 
+color: #666; 
+margin-top: auto; 
 text-align: center;
-padding: 10px 0; /* Padding for spacing */
+padding: 10px 0; 
 }
 #overlay {
     position: absolute;
