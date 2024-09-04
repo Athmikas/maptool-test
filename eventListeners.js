@@ -1,5 +1,5 @@
 export const addEventListener = {
-    legislativeCheckBox: function (){
+    legislativeCheckBox: function (map,legislativeLayer){
         document.getElementById('toggle-legislative').addEventListener('change', function(e) {
             if (e.target.checked) {
                 legislativeLayer.addTo(map);
@@ -29,7 +29,7 @@ export const addEventListener = {
         });
     },
 
-    countyCheckBox: function () {
+    countyCheckBox: function (map,countyLayer,highlightedCountyLayer) {
         document.getElementById('toggle-county').addEventListener('change', function(e) {
             if (e.target.checked || e.target.disabled) {
                 countyLayer.addTo(map);

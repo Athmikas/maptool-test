@@ -79,10 +79,16 @@ function appLayerAddRules()
      });
 }
 
-function highlightCounty(countyName) {
+function removeHighlightedCountyLayer()
+{
     if (highlightedCountyLayer) {
         map.removeLayer(highlightedCountyLayer);
     }
+}
+
+function highlightCounty(countyName) {
+    removeHighlightedCountyLayer();
+
     var selectedFeature = countyData.features.find(function (feature) {
         return feature.properties.NAME === countyName;
     });
@@ -93,7 +99,7 @@ function highlightCounty(countyName) {
                     color: "#ff0000",
                     weight: 5,
                     opacity: 1,
-                    fillOpacity: 0.1,
+                    fillOpacity: 0.05,
                     fillColor: '#ff0000'
                 };
             }
@@ -136,6 +142,7 @@ function loadPrecinctData() {
             // Show precincts by default
             document.getElementById('toggle-legend').checked = true;
             showPrecinctsForCounty(document.getElementById('county-select').value);
+            addEventListener.precinctCheckbox();
         })
         .catch(function (error) {
             console.error("Could not load the GeoJSON file.", error);
@@ -158,7 +165,7 @@ function loadLegislativeData() {
                      };
                  }
              });
-             
+             addEventListener.legislativeCheckBox(map,legislativeLayer);
          })
          .catch(function(error) {
              console.error("Could not load the Legislative Boundaries GeoJSON file from API.", error);
@@ -170,9 +177,10 @@ function loadCountyData() {
         .then(function(response) {
             countyData = response.data;
             addCountyLayer();
-            populateCountySelector(countyData.features)
+            populateCountySelector(countyData.features);
             var bounds = countyLayer.getBounds();
             map.fitBounds(bounds);
+            addEventListener.countyCheckBox(map,countyLayer,highlightedCountyLayer);
 
         })
         .catch(function(error) {
@@ -196,9 +204,6 @@ function initCheckBoxes()
     document.getElementById('toggle-county').checked = true;
     document.getElementById('toggle-county').disabled = true;
 
-    addEventListener.precinctCheckbox();
-    addEventListener.legislativeCheckBox();
-    addEventListener.countyCheckBox();
 }
 
 function initCountySelector()
@@ -269,13 +274,27 @@ map.on('click', function (e) {
     reverseGeocode(e.latlng.lat, e.latlng.lng, cancelTokenSource.token);
 });
 
+function clearPrecinctLayer()
+{
+    if (precinctLayers.length > 0) {
+        precinctLayers.forEach(function (layer) {
+            map.removeLayer(layer);
+        });
+        precinctLayers = [];
+    }
+}
+
 function placeMarker(latlng) {
     zoomToCoords(latlng);
 
     if (marker) {
         map.removeLayer(marker);
     }
+
+    clearPrecinctLayer();
+    removeHighlightedCountyLayer();
     setPlaceholderAddress(); 
+
     var lat = latlng.lat.toFixed(2);
     var lng = latlng.lng.toFixed(2);
     var precinct = getGeographicalFeature(lat, lng, precinctData, 'PRECINCT_NAME');
@@ -323,12 +342,7 @@ function showPrecinctsForCounty(countyName) {
 
     if (!document.getElementById('toggle-legend').checked) return;
 
-    if (precinctLayers.length > 0) {
-        precinctLayers.forEach(function (layer) {
-            map.removeLayer(layer);
-        });
-        precinctLayers = [];
-    }
+    clearPrecinctLayer();
 
     var colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#201923', '#ffffff', '#fcff5d', '#7dfc00', '#0ec434', '#228c68', '#8ad8e8', '#235b54', '#29bdab', '#3998f5', '#37294f', '#277da7', '#3750db', '#f22020', '#991919', '#ffcba5', '#e68f66', '#632819',  '#c56133','#ffc413', '#b732cc', '#772b9d', '#f47a22', '#2f2aa0', '#f07cab', '#d30b94', '#edeff3', '#c3a5b4', '#946aa2', '#5d4c86','#96341c']
     var precinctColorMap = {};
