@@ -135,7 +135,7 @@ function loadCountyAuditorInfo() {
 }
 
 function loadPrecinctData() {
-    axios.get('data/Voting_Precincts.geojson')
+    axios.get('data/map.geojson')
         .then(function (response) {
             precinctData = response.data;
 
@@ -297,7 +297,7 @@ function placeMarker(latlng) {
 
     var lat = latlng.lat.toFixed(2);
     var lng = latlng.lng.toFixed(2);
-    var precinct = getGeographicalFeature(lat, lng, precinctData, 'PRECINCT_NAME');
+    var precinct = getGeographicalFeature(lat, lng, precinctData, 'Name');
     var county = getGeographicalFeature(lat, lng, countyData, 'NAME');
     var district = getGeographicalFeature(lat, lng, legislativeData, 'DISTRICT');
 
@@ -344,7 +344,7 @@ function showPrecinctsForCounty(countyName) {
 
     clearPrecinctLayer();
 
-    var colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#201923', '#ffffff', '#fcff5d', '#7dfc00', '#0ec434', '#228c68', '#8ad8e8', '#235b54', '#29bdab', '#3998f5', '#37294f', '#277da7', '#3750db', '#f22020', '#991919', '#ffcba5', '#e68f66', '#632819',  '#c56133','#ffc413', '#b732cc', '#772b9d', '#f47a22', '#2f2aa0', '#f07cab', '#d30b94', '#edeff3', '#c3a5b4', '#946aa2', '#5d4c86','#96341c']
+    var colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#201923', '#6B3E3E', '#fcff5d', '#7dfc00', '#0ec434', '#228c68', '#8ad8e8', '#235b54', '#29bdab', '#3998f5', '#37294f', '#277da7', '#3750db', '#f22020', '#991919', '#ffcba5', '#e68f66', '#632819',  '#c56133','#ffc413', '#b732cc', '#772b9d', '#f47a22', '#2f2aa0', '#f07cab', '#d30b94', '#edeff3', '#c3a5b4', '#946aa2', '#5d4c86','#96341c']
     var precinctColorMap = {};
     var colorIndex = 0;
 
@@ -356,7 +356,7 @@ function showPrecinctsForCounty(countyName) {
 
     precinctData.features.forEach(function (feature) {
         if (turf.booleanPointInPolygon(turf.centroid(feature), county)) {
-            var precinctName = feature.properties.PRECINCT_NAME;
+            var precinctName = feature.properties.Name;
             if (!precinctColorMap[precinctName]) {
                 precinctColorMap[precinctName] = colors[colorIndex % colors.length];
                 colorIndex++;
@@ -447,10 +447,8 @@ function highlightMarkersForPrecinctInCounty(precinct, county) {
     clearHighlightedPollLocMarkers();
     if (pollLocMarkerMap[precinct]) {
         pollLocMarkerMap[precinct].forEach(function (marker) {
-            if (marker.options.county === county) {
                 marker.setIcon(highlightedPolLocIcon);
                 highlightedPollLocs.push(marker);
-            }
         });
     }
 }
@@ -500,11 +498,11 @@ document.getElementById('toggle-legend').addEventListener('change', function(e) 
 function populatePollingLocations(geocodedPollingLocs)
 {
     geocodedPollingLocs.forEach(function(pollingLoc) {
-        var precinctsList = String(pollingLoc.Precinctslist).split(',').map(function(precinct) {
+        var precinctsList = String(pollingLoc.Precincts_list).split(',').map(function(precinct) {
             return precinct.trim();
         });
 
-        var marker = L.marker([pollingLoc.Latitude, pollingLoc.Longitude], { icon: notHighlightedPolLocIcon, county: pollingLoc.County }).addTo(map);
+        var marker = L.marker([pollingLoc.latitude, pollingLoc.longitude], { icon: notHighlightedPolLocIcon, county: pollingLoc.County }).addTo(map);
         marker.bindPopup(
             `<b>County:</b> ${pollingLoc.County}<br>` +
             `<b>Polling Location:</b> ${pollingLoc['PollingLocation']}<br>` +
@@ -512,7 +510,7 @@ function populatePollingLocations(geocodedPollingLocs)
             `<b>City:</b> ${pollingLoc.City}<br>` +
             `<b>Zip Code:</b> ${pollingLoc['ZipCode']}<br>` +
             `<b>Polling Hours:</b> ${pollingLoc['PollingHours']}<br>` +
-            `<b>Precincts List:</b> ${pollingLoc.Precinctslist}<br>`
+            `<b>Precincts List:</b> ${pollingLoc.Precincts_list}<br>`
         );
 
         precinctsList.forEach(function(precinct) {
@@ -537,7 +535,7 @@ function populatePollingLocations(geocodedPollingLocs)
 
 function loadPollingLocationsData()
 {
-    axios.get('data/updated_geocoded_precincts.json')
+    axios.get('data/geocoded_polling_locations_with_precincts.json')
     .then(function(response) {
         populatePollingLocations(response.data)
     })
