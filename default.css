@@ -35,36 +35,11 @@ body, html {
     flex-direction: column;
     position: relative;
     box-sizing: border-box;
-    min-width: 25%; 
-    max-width: 33%; 
-    width: 33%;
+    width: 28%;
 }
 
-.resize-handle {
-    width: 10px; 
-    background-color: transparent; 
-    cursor: ew-resize; 
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.resize-handle::before,
-.resize-handle::after {
-    content: '';
-    display: block;
-    width: 2px;
-    height: 50px; 
-    background-color: #aaa; 
-    margin: 0 2px; 
-}
 .description-text {
-    margin-bottom: 10px; 
+    margin-bottom: 15px; 
 }
 .address-content-wrapper {
     display: flex;
@@ -72,18 +47,27 @@ body, html {
     align-items: center;
     justify-content: flex-start;
     overflow-x: hidden; 
+    margin-bottom: 10px;
 }
 .address-display {
     width: 100%;
     padding: 12px;
     border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 0px;
     background-color: #ffffff;
-    margin-bottom: 20px;
 }
-    
+
+.county-auditor-group {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .county-info-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     margin-bottom: 20px;
     display: block;
@@ -91,12 +75,11 @@ body, html {
 }
 
 .county-info-table td {
-    width: 100%;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
     padding: 12px;
     text-align: left;
     background-color: #ffffff;
+    font-size: 0.9em;
+    white-space: pre-wrap;
 }
 
 .county-info-table tr:first-child td {
@@ -106,25 +89,13 @@ body, html {
     border-bottom: none;
 }
 .data-source {
-font-size: 0.8em; 
+font-size: 0.6em; 
 color: #666; 
 margin-top: auto; 
 text-align: center;
 padding: 10px 0; 
 }
-#overlay {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #ffffff;
-    padding: 20px 40px;
-    border-radius: 5px;
-    font-size: 1.5em;
-    text-align: center;
-    z-index: 1000;
-}
+
 .leaflet-control-search {
     max-width: 400px;
     width: 100%;
@@ -186,11 +157,11 @@ padding: 10px 0;
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    width: 200px;
+    width: 15%;
     background-color: #e9ecef;
     padding: 10px;
-    margin-right: 10px;
 }
+
 #checkbox-container input[type="checkbox"] {
     margin-right: 10px;
     height: 1.5em;
@@ -200,11 +171,18 @@ padding: 10px 0;
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    font-size: 1.1em;
+    font-size: 1.0em;
 }
+
+.allowed-counties-text {
+    font-weight: bold; /* Make the text bold to emphasize it */
+    font-size: 14px; /* Adjust the font size as needed */
+    margin-bottom: 40px; /* Add a bottom margin of 15px (adjust the value as needed) */
+}
+
 #county-select {
     margin-bottom: 20px;
-    font-size: 1.2em;
+    font-size: 1.0em;
     height: 2.5em;
 }
 #legend {
@@ -212,20 +190,43 @@ padding: 10px 0;
     padding: 10px;
     margin-top: 20px;
     border-radius: 5px;
-    max-height: 150px;
+    max-height: 300px;
     overflow-y: auto;
     flex-grow: 1;
 }
+
 #legend h4 {
     margin: 0 0 5px 0;
+    font-size: 1.1em;
+    color: #666; /* Changes the text color to grey */
 }
+
 .legend-item {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
 }
+
 .legend-color {
     width: 20px;
     height: 20px;
     margin-right: 5px;
+}
+
+.leaflet-popup-content {
+    font-family: Futura;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #292828;
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: #ffffff; /* Popup background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    padding: 1px;
+}
+
+.leaflet-popup-tip {
+    background: #ffffff; /* The tip of the popup */
 }
