@@ -428,15 +428,24 @@ function populatePollingLocations(pollingLocations) {
 }
 
 function populatePostOffices(postOffices) {
-
     const sourceProjection = 'EPSG:3857'; // Web Mercator
     const destProjection = 'EPSG:4326';   // WGS84 (Latitude/Longitude)
 
     postOffices.forEach(postOffice => {
         if (postOffice.x && postOffice.y) {
+            // Convert coordinates from source projection to destination projection
             const [lng, lat] = proj4(sourceProjection, destProjection, [postOffice.x, postOffice.y]);
 
+            // Add the marker to the map
             const postOfficeIconMarker = addSymbolMarker(lat, lng, postOfficeIcon);
+
+            // Bind a popup with the post office address
+            postOfficeIconMarker.bindPopup(postOffice.ADDRESS);
+
+            // Optionally, open the popup by default
+            // postOfficeIconMarker.openPopup();
+
+            // Store the marker for future reference
             postOfficeIconMarkers.push(postOfficeIconMarker);
         } else {
             console.error("Invalid post office coordinates:", postOffice);
@@ -444,14 +453,14 @@ function populatePostOffices(postOffices) {
     });
 }
 
-function getPrecinctsList(precincts) {
-    return String(precincts).split(',').map(precinct => precinct.trim());
-}
-
-function addSymbolMarker(lat,long,icon) {
+function addSymbolMarker(lat, long, icon) {
     return L.marker([lat, long], {
         icon: icon,
     }).addTo(map);
+}
+
+function getPrecinctsList(precincts) {
+    return String(precincts).split(',').map(precinct => precinct.trim());
 }
 
 function bindPopupToPollLocationMarker(marker, pollingLoc, precinctsList) {
