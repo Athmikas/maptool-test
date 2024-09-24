@@ -1,103 +1,163 @@
 body, html {
     font-family: Futura;
-    background-color: #f3f4f6;
+    background-color: #ffffff; /* Ensure background color */
     color: #333;
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
+
 .main-container {
     display: flex;
-    height: 100%;
+    flex-direction: column;
     width: 100%;
+    height: 100vh; /* Full viewport height */
+    max-width: 100%; /* Prevent overflowing screen width */
+    box-sizing: border-box;
+    border: 2px solid #040000; /* Add border around the main container */
 }
+
+#information-panel {
+    height: auto;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    overflow-y: auto;
+    max-width: 100%; /* Prevent overflowing screen width */
+    text-align: center; /* Center text horizontally */
+    display: flex; /* Enable flex container */
+    flex-direction: column; /* Align items vertically */
+    align-items: center; /* Center items horizontally within flex container */
+    justify-content: center; /* Center items vertically within flex container */
+}
+
 .map-container {
     display: flex;
-    flex-direction: column;
-    width: 60%;
-    position: relative;
-    border-left: 2px solid #ccc;
-}
-#map {
-    height: 100%;
+    flex-direction: row; /* Align address display and map side by side */
+    height: 80%; /* Adjust height to ensure visibility */
     width: 100%;
-    border-radius: 0 10px 10px 0;
+    max-width: 100%; /* Prevent overflowing screen width */
+    overflow: hidden; /* Prevent overflow */
+    box-sizing: border-box;
+    flex-grow: 1; /* Allow container to grow */
 }
-#address-panel {
-    height: 100%;
+
+#checkbox-container {
     padding: 15px;
-    border-radius: 10px 0 0 10px;
-    background-color: #ffffff;
+    background-color: #e9ecef;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start */
+    width: 25%; /* Reduced width for better space distribution */
+    box-sizing: border-box;
+    flex-grow: 0; /* Prevent growing */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    border-right:  2px solid #040000;
+}
+
+#address-display-container {
+    display: flex;
+    flex-direction: row; /* Align address display and map side by side */
+    width: 100%;
+    max-width: 100%; /* Prevent overflowing screen width */
+    overflow: hidden; /* Prevent overflow */
+    box-sizing: border-box;
+    flex-grow: 1; /* Allow container to grow */
+}
+
+.county-table-label {
+    flex-grow: 1;
+    flex: 0 0 25%; /* Flex-grow: 0, flex-shrink: 0, flex-basis: 25% */
+    height: auto; /* Auto height to fit content */
+    color: #ffffff; /* Text color for contrast */
+    display: flex; /* Enable flex layout */
+    align-items: center; /* Center align text vertically */
+    justify-content: center; /* Center align text horizontally */
+    background-color: #872222; /* Set background color */
+    box-sizing: border-box; /* Include padding and border in width/height */
+    border: 1px solid #c33e3e; /* Optional: Add border for visibility */
+}
+
+#address-display {
+    background-color: #d7cfcf;
+    box-sizing: border-box;
+    flex-shrink: 1; /* Prevent shrinking */
+    display: flex;
+    max-height: 100%; /* Prevent overflow in the main container */
+    width: 100%; /* Full width */
+    justify-content: center; /* Center children horizontally */
+}
+
+#map-address {
+    width: 75%;
+    height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+#map {
+    width: 100%; /* Adjust width to fit in the row */
+    height: 60%; /* Ensure map takes full height */
+    border-radius: 0 10px 10px 0;
     position: relative;
     box-sizing: border-box;
-    width: 28%;
+    flex-grow: 1; /* Allow map to take up available space */
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
 }
 
-.description-text {
-    margin-bottom: 15px; 
-}
-.address-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow-x: hidden; 
-    margin-bottom: 10px;
-}
-.address-display {
-    width: 100%;
-    padding: 12px;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 0px;
-    background-color: #ffffff;
+#legend {
+    background: white;
+    padding: 10px;
+    margin-top: 10px; /* Space above legend */
+    border-radius: 5px;
+    max-height: 50%; /* Set max height for legend */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    max-width: 100%; /* Prevent overflowing screen width */
+    box-sizing: border-box;
+    min-height: 150px;
 }
 
-.county-auditor-group {
-    margin-top: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.legend-items, #icon-legend, #layers-legend {
+    margin-bottom: 10px; /* Space between legend items */
 }
 
 .county-info-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    display: block;
-    overflow-x: auto; 
+    max-width: 100%; /* Ensure table doesn't exceed parent width */
+    table-layout: fixed; /* Fixed layout to control table width */
+    border-collapse: collapse; /* Collapsed borders */
+    box-sizing: border-box; /* Include padding and border in width */
+    height: 100%; /* Take full height of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin-top: 2%;
+    flex-grow: 1;
 }
 
 .county-info-table td {
-    padding: 12px;
-    text-align: left;
+    padding: 10px;
     background-color: #ffffff;
-    font-size: 0.9em;
-    white-space: pre-wrap;
+    text-align: left;
+    overflow: hidden; /* Prevent content overflow */
+    text-overflow: ellipsis; /* Ellipsis for overflowing text */
+    word-wrap: break-word; /* Break long words */
+    white-space: normal; /* Allow wrapping of content */
 }
 
 .county-info-table tr:first-child td {
     border-top: none;
 }
+
 .county-info-table tr:last-child td {
     border-bottom: none;
 }
-.data-source {
-font-size: 0.6em; 
-color: #666; 
-margin-top: auto; 
-text-align: center;
-padding: 10px 0; 
-}
 
 .leaflet-control-search {
-    max-width: 400px;
+    max-width: 100%; /* Prevent overflowing screen width */
     width: 100%;
     box-sizing: border-box;
     position: absolute;
@@ -105,6 +165,7 @@ padding: 10px 0;
     right: 10px;
     z-index: 1000;
 }
+
 .leaflet-control-search .search-input {
     border-radius: 20px;
     border: 1px solid #ccc;
@@ -112,7 +173,9 @@ padding: 10px 0;
     padding: 0 50px 0 20px;
     width: 100%;
     box-sizing: border-box;
+    max-width: 100%; /* Prevent overflowing screen width */
 }
+
 .leaflet-control-search .search-button {
     background: url('https://img.icons8.com/ios-filled/50/000000/search.png') no-repeat;
     background-size: contain;
@@ -125,13 +188,16 @@ padding: 10px 0;
     transform: translateY(-50%);
     border: none;
 }
+
 .leaflet-control-search .search-cancel {
     display: none;
 }
+
 .leaflet-control-search .search-tooltip {
     max-height: calc(100vh - 90px);
     width: 100%;
 }
+
 .leaflet-control-search .search-tip {
     background-color: white;
     border-radius: 0;
@@ -145,33 +211,14 @@ padding: 10px 0;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 .leaflet-control-search .search-tip:hover {
     background-color: #f0f0f0;
     cursor: pointer;
 }
+
 .leaflet-control-search .search-tip:active {
     background-color: #e0e0e0;
-}
-#checkbox-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    width: 15%;
-    background-color: #e9ecef;
-    padding: 10px;
-}
-
-#checkbox-container input[type="checkbox"] {
-    margin-right: 10px;
-    height: 1.5em;
-    width: 1.3em;
-}
-#checkbox-container label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 1.0em;
 }
 
 .allowed-counties-text {
@@ -184,15 +231,8 @@ padding: 10px 0;
     margin-bottom: 20px;
     font-size: 1.0em;
     height: 2.5em;
-}
-#legend {
-    background: white;
-    padding: 10px;
-    margin-top: 20px;
-    border-radius: 5px;
-    max-height: 300px;
-    overflow-y: auto;
-    flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #legend h4 {
@@ -229,4 +269,19 @@ padding: 10px 0;
 
 .leaflet-popup-tip {
     background: #ffffff; /* The tip of the popup */
+}
+
+.data-source {
+    height: 5%;
+    font-size: 0.7em; /* Set a smaller font size */
+    color: #666; /* Set text color to grey */
+    text-align: center; /* Center the text */
+    padding: 15px;
+    margin-top: 1%;
+}
+
+/* Apply max-width to all elements to prevent overflow */
+* {
+    max-width: 100vw;
+    box-sizing: border-box;
 }

@@ -16,54 +16,26 @@
 </head>
 <body>
     <div class="main-container">
-        <div id="address-panel">
-            <h3 style="text-align: center; color: grey; font-size: 20px;">NORTH DAKOTA NATIVE VOTE</h3>
-            <h3 style="text-align: center; color: black;">2024 Get Out the Vote (GOTV) Map</h3>
+        <div id="information-panel">
+                <h3 style="text-align: center; color: grey; font-size: 20px;">NORTH DAKOTA NATIVE VOTE</h3>
+                <h3 style="text-align: center; color: black;">2024 Get Out the Vote (GOTV) Map</h3>
+                <br>
+                <p class="description-text"> 
+                    Use this map to find information about your county elections, county auditor, precinct, and polling place locations for the upcoming 2024 election.
+                    <br>Precinct information is currently only available for 8 counties: 
+                    <span style="color:#e66100;">Benson</span>, 
+                    <span style="color:#e66100;">Dunn</span>, 
+                    <span style="color:#e66100;">McKenzie</span>, 
+                    <span style="color:#e66100;">McLean</span>, 
+                    <span style="color:#e66100;">Mercer</span>, 
+                    <span style="color:#e66100;">Mountrail</span>, 
+                    <span style="color:#e66100;">Rolette</span>, 
+                    <span style="color:#e66100;">Sioux</span>.
+                </p>
+        </div>
 
-            <br>
-            <p class="description-text"> 
-                Use this map to find information about your county elections, county auditor, precinct, and polling place locations for the upcoming 2024 election. <br><br> 
-                Precinct information is currently only available for 8 counties: 
-                <span style="color:#e66100;">Benson</span>, 
-                <span style="color:#e66100;">Dunn</span>, 
-                <span style="color:#e66100;">McKenzie</span>, 
-                <span style="color:#e66100;">McLean</span>, 
-                <span style="color:#e66100;">Mercer</span>, 
-                <span style="color:#e66100;">Mountrail</span>, 
-                <span style="color:#e66100;">Rolette</span>, 
-                <span style="color:#e66100;">Sioux</span>.
-            </p>
-            
-            <div class="address-content-wrapper">
-                <div id="address-display" class="address-display"></div>
-                <div class="county-auditor-group">
-                    <table id="county-info-table" class="county-info-table">
-                        <colgroup>
-                            <col style="width: 10%;"> 
-                            <col style="width: 90%;"> 
-                        </colgroup>
-                        <tr><td><strong>County: </strong></td><td></td></tr>
-                        <tr><td><strong>County Auditor: </strong></td><td></td></tr>
-                        <tr><td><strong>Auditor Phone/Fax/Email: </strong></td><td></td></tr>
-                        <tr><td><strong>Auditor Address: </strong></td><td></td></tr>
-                    </table>
-                </div>
-            </div>
-            <div class="data-source">
-                Data Sources: North Dakota Secretary of State (precinct boundaries digitized in August 2024), North Dakota GIS Hub, geocoding services via Nominatim API, accessed 2024. 
-                <br><br>
-                This project was developed by 
-                <a href="https://ndnativevote.org/" target="_blank">North Dakota Native Vote</a> 
-                in partnership with the 
-                <a href="https://datascience.uchicago.edu/" target="_blank">University of Chicago Data Science Institute</a>, 
-                with support from the 
-                <a href="https://11thhourproject.org/" target="_blank">11th Hour Project</a>.            </div>
-        </div>
         <div class="map-container">
-            <div id="map">
-                <div id="overlay">Click on Map to Estimate Precinct and Address Info</div>
-            </div>
-        </div>
+           
         <div id="checkbox-container">
             <h5>County:</h5>
             <select id="county-select">
@@ -89,7 +61,30 @@
                 <div id="layers-legend"></div>        
             </div>
         </div>
+        <div id="map-address">
+            <div id="map"></div>
+            <div id="address-display"></div>
+        </div>
+        </div>
     </div>
+    <div id="address-display-container">
+        <table id="county-info-table" class="county-info-table">
+            <colgroup>
+                <col style="width: 10%;"> 
+                <col style="width: 90%;"> 
+            </colgroup>
+            <tr><td><strong>County: </strong></td><td></td></tr>
+            <tr><td><strong>County Auditor: </strong></td><td></td></tr>
+            <tr><td><strong>Auditor Phone/Fax/Email: </strong></td><td></td></tr>
+            <tr><td><strong>Auditor Address: </strong></td><td></td></tr>
+        </table>
+    </div> 
+    <div class="data-source">
+        Data Sources: North Dakota Secretary of State (precinct boundaries digitized in August 2024), North Dakota GIS Hub, geocoding services via Nominatim API, accessed 2024. 
+        This project was developed by <a href="https://ndnativevote.org/" target="_blank">North Dakota Native Vote</a> 
+        in partnership with the <a href="https://datascience.uchicago.edu/" target="_blank">University of Chicago Data Science Institute</a>, with support from the 
+        <a href="https://11thhourproject.org/" target="_blank">11th Hour Project</a>.           
+     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.4/leaflet-search.min.js"></script>
@@ -98,8 +93,6 @@
     <script type="module" src="index.js"></script>
 </body>
 </html>
-
-
 
 
 

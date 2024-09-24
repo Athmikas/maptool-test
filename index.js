@@ -241,7 +241,7 @@ function getCountyFeatureByName(countyName) {
     return countyData.features.find(feature => feature.properties.NAME === countyName);
 }
 
-function generatePrecinctColorMap(county) {
+function generatePrecinctColorMap(countyFeature) {
     const colors = [
         '#e6194b', '#ffe119', '#4363d8', '#f58231', '#201923', '#6B3E3E', '#fcff5d',
         '#8ad8e8', '#235b54', '#29bdab', '#3998f5', '#37294f', '#277da7', '#3750db',
@@ -253,7 +253,7 @@ function generatePrecinctColorMap(county) {
     let colorIndex = 0;
 
     precinctData.features.forEach(feature => {
-        if (turf.booleanPointInPolygon(turf.centroid(feature), county)) {
+        if (feature.properties.County == countyFeature.properties.NAME) {
             const precinctName = feature.properties.Name;
             if (!precinctColorMap[precinctName]) {
                 precinctColorMap[precinctName] = colors[colorIndex % colors.length];
@@ -265,9 +265,9 @@ function generatePrecinctColorMap(county) {
     return precinctColorMap;
 }
 
-function showPrecinctColorsOnMap(precinctColorMap, county) {
+function showPrecinctColorsOnMap(precinctColorMap, countyFeature) {
     precinctData.features.forEach(feature => {
-        if (turf.booleanPointInPolygon(turf.centroid(feature), county)) {
+        if (feature.properties.County == countyFeature.properties.NAME) {
             const precinctName = feature.properties.Name;
             const layer = L.geoJson(feature, {
                 style: () => ({
@@ -340,7 +340,7 @@ function displayAddress(address) {
         address.address.postcode,
     ];
     ELEMENTS.addressDisplay.innerHTML = components.filter(Boolean).length > 0 
-        ? `<span style="color: #666; font-weight: 500;">Approximate address: </span><br>${components.filter(Boolean).join(', ')}` 
+        ? `<span style="color: #666; font-weight: 500;">Approximate address:  </span>${components.filter(Boolean).join(', ')}` 
         : 'Address not found';
 }
 
@@ -458,7 +458,7 @@ function bindPopupToPollLocationMarker(marker, pollingLoc, precinctsList) {
         <b>City:</b> ${pollingLoc.City}<br>
         <b>Zip Code:</b> ${pollingLoc.ZipCode}<br>
         <b>Polling Hours:</b> ${pollingLoc.PollingHours}<br><br>
-        <b>Precincts List:</b> ${precinctsList.join(',')}<br>
+        <b style="font-size: 10px;">Precincts List:</b> <span style="font-size: 10px;">${precinctsList.join(', ')}</span><br>
     `);
 }
 
@@ -469,11 +469,25 @@ function updatePollLocMarkerMap(precinctsList, marker) {
 }
 
 function addMarkerHoverEffect(marker) {
+    // For desktop devices
     marker.on('mouseover', function() {
         this.openPopup();
     });
     marker.on('mouseout', function() {
         this.closePopup();
+    });
+
+    // For mobile devices
+    marker.on('touchstart', function() {
+        this.openPopup();
+    });
+    marker.on('touchend', function() {
+        this.closePopup();
+    });
+
+    // Optional: Prevent the default behavior of touch events to avoid map panning on touch
+    marker.on('touchstart', function(e) {
+        e.originalEvent.preventDefault();
     });
 }
 
