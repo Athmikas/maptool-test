@@ -457,8 +457,7 @@ function bindPopupToPollLocationMarker(marker, pollingLoc, precinctsList) {
         <b>Address:</b> ${pollingLoc.Address}<br>
         <b>City:</b> ${pollingLoc.City}<br>
         <b>Zip Code:</b> ${pollingLoc.ZipCode}<br>
-        <b>Polling Hours:</b> ${pollingLoc.PollingHours}<br><br>
-        <b style="font-size: 10px;">Precincts List:</b> <span style="font-size: 10px;">${precinctsList.join(', ')}</span><br>
+        <b>Polling Hours:</b> ${pollingLoc.PollingHours}<br>
     `);
 }
 
@@ -492,7 +491,10 @@ function addMarkerHoverEffect(marker) {
 }
 
 function createDynamicPollingIcon(zoomLevel, iconUrl, scale, minSize) {
-    const size = zoomLevel * scale + minSize; // Customize as needed
+    var size = zoomLevel * scale + minSize; // Customize as needed
+
+    var maxSize = 50;
+    size = Math.max(minSize, Math.min(size, maxSize));
 
     return L.icon({
         iconUrl: iconUrl,

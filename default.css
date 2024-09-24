@@ -16,7 +16,6 @@ body, html {
     height: 100vh; /* Full viewport height */
     max-width: 100%; /* Prevent overflowing screen width */
     box-sizing: border-box;
-    border: 2px solid #040000; /* Add border around the main container */
 }
 
 #information-panel {
@@ -59,7 +58,7 @@ body, html {
     border-right:  2px solid #040000;
 }
 
-#address-display-container {
+#auditor-display-container {
     display: flex;
     flex-direction: row; /* Align address display and map side by side */
     width: 100%;
