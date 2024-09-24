@@ -16,7 +16,7 @@ export const BOUNDARY_LAYER_PATHS = {
     TRIBAL: 'https://services1.arcgis.com/GOcSXpzwBHyk2nog/arcgis/rest/services/NDGISHUB_Reservations/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson',
     COUNTY: 'https://services1.arcgis.com/GOcSXpzwBHyk2nog/arcgis/rest/services/NDGISHUB_County_Boundaries/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson',
     LEGISLATIVE: 'data/legislative_boundaries_2024.geojson',
-    PRECINCT: 'data/map2.geojson',
+    PRECINCT: 'data/precinct_boundaries.geojson',
 };
 
 export const SYMBOL_LAYER_PATHS = {
