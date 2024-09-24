@@ -38,17 +38,17 @@
         <div id="checkbox-container">
             <h5>County:</h5>
             <select id="county-select">
-                <option value="">No County Selected</option>
+                <option value="">Select County</option>
             </select>
             <br>
-            <h5>Select layers:</h5>
+            <h5 id="select-layers">Select layers:</h5>
             <label><input type="checkbox" id="toggle-county" checked> Counties</label>
             <label><input type="checkbox" id="toggle-precincts" checked> Precincts</label>
             <label><input type="checkbox" id="toggle-legislative"> Legislative districts</label> 
             <label><input type="checkbox" id="toggle-tribal-boundaries"> Tribal lands</label>
             <label><input type="checkbox" id="toggle-post-offices"> Post offices</label>
             <div id="legend" style="display:block;">
-                <h4>Precincts</h4>
+                <h4 id="precincts-label">Precincts</h4>
                 <div id="legend-items" class="legend-items">
                     Select or click on a county to view precincts.
                 </div>

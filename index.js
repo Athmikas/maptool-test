@@ -220,7 +220,12 @@ function placeMarker(latlng, precinct, district) {
     `;
 
     marker = L.marker(latlng).addTo(map)
-        .bindPopup(popupContent)
+        .bindPopup(popupContent, {
+            maxWidth: 300, // Set a fixed maximum width for the popup
+            maxHeight: 200, // Set a fixed maximum height for the popup
+            autoPan: true, // Ensure the popup pans into view
+            keepInView: true // Keeps the popup in view when zooming
+        })
         .openPopup();
 }
 
@@ -309,8 +314,7 @@ function updatePrecinctsInLegend(precinctColorMap) {
     sortedPrecinctNames.forEach(precinctName => {
         ELEMENTS.precinctsLegendDiv.innerHTML += `
             <div class="legend-item">
-                <div class="legend-color" style="background: rgba(${hexToRgb(precinctColorMap[precinctName])}, 0.55);"></div>
-                ${precinctName}
+                <div class="legend-color" style="background: rgba(${hexToRgb(precinctColorMap[precinctName])}, 0.55);"></div> ${precinctName}
             </div>`;
     });
 }
@@ -339,10 +343,12 @@ function displayAddress(address) {
         address.address.state,
         address.address.postcode,
     ];
+
     ELEMENTS.addressDisplay.innerHTML = components.filter(Boolean).length > 0 
-        ? `<span style="color: #666; font-weight: 500;">Approximate address:  </span>${components.filter(Boolean).join(', ')}` 
+        ? `<span style="color: #666; font-weight: 500;">Approximate address:&nbsp</span>${components.filter(Boolean).join(', ')}` 
         : 'Address not found';
 }
+
 
 function setPlaceholderAddress() {
     ELEMENTS.addressDisplay.textContent = 'Fetching address...';
@@ -505,17 +511,34 @@ function createDynamicPollingIcon(zoomLevel, iconUrl, scale, minSize) {
 }
 
 function createLayersLegend() {
+    // Make sure the element exists in the DOM before adding content
+    if (!ELEMENTS.layersLegend) {
+        console.error('layersLegend element not found in DOM.');
+        return;
+    }
+
     ELEMENTS.layersLegend.innerHTML = '';
 
-    let legendContent = '<div class="info legend">';
-    legendContent += '<i style="border: 3px dashed #000000; width: 30px; height: 0; display: inline-block; margin-right: 8px;"></i> Legislative <br>';
-    legendContent += '<i style="border: 3px solid #a3be8c; width: 30px; height: 0; display: inline-block; margin-right: 8px;"></i> Tribal <br>';
-    legendContent += '<i style="border: 2px solid #ff7800; width: 30px; height: 0; display: inline-block; margin-right: 8px;"></i> Counties with precinct info<br>';
-    legendContent += '<i style="border: 1px solid #000000; width: 30px; height: 0; display: inline-block; margin-right: 8px;"></i> Other Counties<br>';
-    legendContent += '</div>';
+    let legendContent = `
+        <div class="info legend">
+            <div class="legend-item legislative">
+                <i class="legend-line" style="border-top: 3px dashed #000000;"></i> Legislative
+            </div>
+            <div class="legend-item tribal">
+                <i class="legend-line" style="border-top: 3px solid #a3be8c;"></i> Tribal
+            </div>
+            <div class="legend-item">
+                <i class="legend-line" style="border-top: 2px solid #ff7800;"></i> Counties with precinct info
+            </div>
+            <div class="legend-item">
+                <i class="legend-line" style="border-top: 1px solid #000000;"></i> Other Counties
+            </div>
+        </div>
+    `;
 
     ELEMENTS.layersLegend.innerHTML = legendContent;
 }
+
 
 function createIconLegend() {    
     ELEMENTS.iconLegend.innerHTML = '';
@@ -524,7 +547,9 @@ function createIconLegend() {
         <div class="info icon-legend">
             <img src="${ICON_PATHS.POLLING_LOCATION}" style="width: 25px; height: 25px; margin-right: 4px;"> Polling place<br>
             <img src="${ICON_PATHS.HIGHLIGHTED_POLLING_LOCATION}" style="width: 25px; height: 25px; margin-right: 4px;"> Polling place for selected precinct <br>
-            <img src="${ICON_PATHS.POST_OFFICE}" style="width: 25px; height: 25px; margin-right: 4px;"> Post office <br>
+            <div class="icon-legend-item post-office">
+                <img src="${ICON_PATHS.POST_OFFICE}" style="width: 25px; height: 25px; margin-right: 4px;"> Post office
+            </div>
         </div>`;
 
     ELEMENTS.iconLegend.innerHTML = iconLegendContent;

@@ -1,6 +1,7 @@
+/* Global Styles */
 body, html {
     font-family: Futura;
-    background-color: #ffffff; /* Ensure background color */
+    background-color: #ffffff;
     color: #333;
     margin: 0;
     padding: 0;
@@ -14,10 +15,17 @@ body, html {
     flex-direction: column;
     width: 100%;
     height: 100vh; /* Full viewport height */
-    max-width: 100%; /* Prevent overflowing screen width */
+    max-width: 100%;
     box-sizing: border-box;
 }
 
+@media (max-width: 600px) {
+    .icon-legend-item.post-office {
+        display: none;
+    }
+}
+
+/* Information Panel */
 #information-panel {
     height: auto;
     padding: 15px;
@@ -26,71 +34,69 @@ body, html {
     box-sizing: border-box;
     flex-shrink: 0;
     overflow-y: auto;
-    max-width: 100%; /* Prevent overflowing screen width */
-    text-align: center; /* Center text horizontally */
-    display: flex; /* Enable flex container */
-    flex-direction: column; /* Align items vertically */
-    align-items: center; /* Center items horizontally within flex container */
-    justify-content: center; /* Center items vertically within flex container */
+    max-width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Map Container */
+.map-container, #auditor-display-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-grow: 1; /* Allow container to grow */
 }
 
 .map-container {
-    display: flex;
-    flex-direction: row; /* Align address display and map side by side */
     height: 80%; /* Adjust height to ensure visibility */
-    width: 100%;
-    max-width: 100%; /* Prevent overflowing screen width */
-    overflow: hidden; /* Prevent overflow */
-    box-sizing: border-box;
-    flex-grow: 1; /* Allow container to grow */
 }
 
+/* Checkbox Container */
 #checkbox-container {
-    padding: 15px;
+    padding: 10px;
     background-color: #e9ecef;
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the start */
-    width: 25%; /* Reduced width for better space distribution */
+    flex-direction: column;
+    align-items: flex-start;
+    width: 25%;
     box-sizing: border-box;
-    flex-grow: 0; /* Prevent growing */
-    overflow-y: auto; /* Enable scrolling if content overflows */
-    border-right:  1px solid #040000;
+    flex-grow: 0;
+    overflow-y: auto;
+    border-right: 1px solid #040000;
 }
 
-#auditor-display-container {
-    display: flex;
-    flex-direction: row; /* Align address display and map side by side */
-    width: 100%;
-    max-width: 100%; /* Prevent overflowing screen width */
-    overflow: hidden; /* Prevent overflow */
-    box-sizing: border-box;
-    flex-grow: 1; /* Allow container to grow */
-}
-
+/* County Table Label */
 .county-table-label {
     flex-grow: 1;
     flex: 0 0 25%; /* Flex-grow: 0, flex-shrink: 0, flex-basis: 25% */
-    height: auto; /* Auto height to fit content */
-    color: #ffffff; /* Text color for contrast */
-    display: flex; /* Enable flex layout */
-    align-items: center; /* Center align text vertically */
-    justify-content: center; /* Center align text horizontally */
-    background-color: #872222; /* Set background color */
-    box-sizing: border-box; /* Include padding and border in width/height */
-    border: 1px solid #c33e3e; /* Optional: Add border for visibility */
+    height: auto;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #872222;
+    box-sizing: border-box;
+    border: 1px solid #c33e3e;
 }
 
+/* Address Display */
 #address-display {
     background-color: #d7cfcf;
     box-sizing: border-box;
-    flex-shrink: 1; /* Prevent shrinking */
+    flex-shrink: 1;
     display: flex;
-    max-height: 100%; /* Prevent overflow in the main container */
-    width: 100%; /* Full width */
-    justify-content: center; /* Center children horizontally */
+    max-height: 100%;
+    width: 100%;
+    justify-content: center;
 }
 
+/* Map Address and Map */
 #map-address {
     width: 75%;
     height: 100%;
@@ -99,40 +105,106 @@ body, html {
 }
 
 #map {
-    width: 100%; /* Adjust width to fit in the row */
-    height: 60%; /* Ensure map takes full height */
+    width: 100%;
+    height: 60%;
     border-radius: 0 10px 10px 0;
     position: relative;
     box-sizing: border-box;
-    flex-grow: 1; /* Allow map to take up available space */
+    flex-grow: 1;
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
 }
 
+/* Legend Styling */
 #legend {
     background: white;
     padding: 10px;
-    margin-top: 10px; /* Space above legend */
+    margin-top: 10px;
     border-radius: 5px;
-    max-height: 50%; /* Set max height for legend */
-    overflow-y: auto; /* Enable scrolling if content overflows */
-    max-width: 100%; /* Prevent overflowing screen width */
+    max-height: 70%;
+    overflow-y: auto;
+    max-width: 100%;
     box-sizing: border-box;
     min-height: 150px;
 }
 
-.legend-items, #icon-legend, #layers-legend {
-    margin-bottom: 10px; /* Space between legend items */
+#legend h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    color: #666;
 }
 
+.leaflet-popup-content {
+    max-width: 100%; /* Ensure content doesn't exceed the popup width */
+    white-space: normal; /* Allow text to wrap within the popup */
+}
+
+@media (max-width: 600px) {
+    #legend h4 {
+        font-size: 0.7em;
+    }
+}
+
+/* Legend Items */
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+/* Legend Lines */
+.legend-line {
+    min-width: 20px;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle; /* Align lines and text */
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.legend-name {
+    font-size: 1em;
+    display: inline-block;
+}
+
+/* Hide Specific Legend Items on Mobile */
+@media (max-width: 600px) {
+    .legend-item.legislative,
+    .legend-item.tribal {
+        display: none;
+    }
+}
+
+/* General Styles for Legend Items */
+.legend-items,
+#icon-legend,
+#layers-legend {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+    .legend-items,
+    #icon-legend,
+    #layers-legend {
+        font-size: 0.6em;
+    }
+}
+
+/* County Info Table */
 .county-info-table {
-    max-width: 100%; /* Ensure table doesn't exceed parent width */
-    table-layout: fixed; /* Fixed layout to control table width */
-    border-collapse: collapse; /* Collapsed borders */
-    box-sizing: border-box; /* Include padding and border in width */
-    height: 100%; /* Take full height of the container */
-    overflow-y: auto; /* Enable vertical scrolling */
+    max-width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto;
     margin-top: 2%;
     flex-grow: 1;
 }
@@ -141,22 +213,20 @@ body, html {
     padding: 10px;
     background-color: #ffffff;
     text-align: left;
-    overflow: hidden; /* Prevent content overflow */
-    text-overflow: ellipsis; /* Ellipsis for overflowing text */
-    word-wrap: break-word; /* Break long words */
-    white-space: normal; /* Allow wrapping of content */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
-.county-info-table tr:first-child td {
-    border-top: none;
-}
-
+.county-info-table tr:first-child td,
 .county-info-table tr:last-child td {
-    border-bottom: none;
+    border: none;
 }
 
+/* Leaflet Control Search */
 .leaflet-control-search {
-    max-width: 100%; /* Prevent overflowing screen width */
+    max-width: 100%;
     width: 100%;
     box-sizing: border-box;
     position: absolute;
@@ -172,7 +242,7 @@ body, html {
     padding: 0 50px 0 20px;
     width: 100%;
     box-sizing: border-box;
-    max-width: 100%; /* Prevent overflowing screen width */
+    max-width: 100%;
 }
 
 .leaflet-control-search .search-button {
@@ -220,47 +290,44 @@ body, html {
     background-color: #e0e0e0;
 }
 
+/* Allowed Counties Text */
 .allowed-counties-text {
-    font-weight: bold; /* Make the text bold to emphasize it */
-    font-size: 14px; /* Adjust the font size as needed */
-    margin-bottom: 40px; /* Add a bottom margin of 15px (adjust the value as needed) */
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 40px;
 }
 
+/* County Select Dropdown */
 #county-select {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     font-size: 1.0em;
-    height: auto; /* Allow height to adjust based on content */
+    height: auto;
     width: 100%;
     box-sizing: border-box;
-    overflow-y: auto; /* Add vertical scroll if the content exceeds the dropdown height */
-    max-height: 200px; /* Set a max-height to ensure dropdown doesn't get too large */
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: normal;
+    display: block;
 }
 
-@media (max-width: 600px) { /* Adjust styles for mobile screens */
+@media (max-width: 600px) {
     #county-select {
-        font-size: 0.8em; /* Smaller font size for mobile */
-        max-height: 300px; /* Increase max-height for mobile if needed */
+        font-size: 0.7em;
+        max-height: 300px;
     }
 }
 
-#legend h4 {
-    margin: 0 0 5px 0;
-    font-size: 1.1em;
-    color: #666; /* Changes the text color to grey */
+/* Hide Elements on Mobile */
+@media (max-width: 600px) {
+    #select-layers,
+    #precincts-label,
+    #legend-items,
+    #checkbox-container label {
+        display: none;
+    }
 }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.legend-color {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-}
-
+/* Leaflet Popup Content */
 .leaflet-popup-content {
     font-family: Futura;
     font-size: 15px;
@@ -269,21 +336,22 @@ body, html {
 }
 
 .leaflet-popup-content-wrapper {
-    background-color: #ffffff; /* Popup background */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
     padding: 1px;
 }
 
 .leaflet-popup-tip {
-    background: #ffffff; /* The tip of the popup */
+    background: #ffffff;
 }
 
+/* Data Source Text */
 .data-source {
     height: 5%;
-    font-size: 0.7em; /* Set a smaller font size */
-    color: #666; /* Set text color to grey */
-    text-align: center; /* Center the text */
+    font-size: 0.7em;
+    color: #666;
+    text-align: center;
     padding: 15px;
     margin-top: 1%;
 }
