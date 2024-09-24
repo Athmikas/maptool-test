@@ -135,11 +135,6 @@ body, html {
     color: #666;
 }
 
-.leaflet-popup-content {
-    max-width: 100%; /* Ensure content doesn't exceed the popup width */
-    white-space: normal; /* Allow text to wrap within the popup */
-}
-
 @media (max-width: 600px) {
     #legend h4 {
         font-size: 0.7em;
@@ -327,12 +322,26 @@ body, html {
     }
 }
 
-/* Leaflet Popup Content */
+/* Default styles for desktop */
 .leaflet-popup-content {
     font-family: Futura;
     font-size: 15px;
     line-height: 1.5;
     color: #292828;
+}
+
+/* For tablets (screen width less than or equal to 768px) */
+@media screen and (max-width: 768px) {
+    .leaflet-popup-content {
+        font-size: 14px;
+    }
+}
+
+/* For mobile phones (screen width less than or equal to 480px) */
+@media screen and (max-width: 480px) {
+    .leaflet-popup-content {
+        font-size: 12px;
+    }
 }
 
 .leaflet-popup-content-wrapper {

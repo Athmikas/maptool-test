@@ -221,10 +221,8 @@ function placeMarker(latlng, precinct, district) {
 
     marker = L.marker(latlng).addTo(map)
         .bindPopup(popupContent, {
-            maxWidth: 300, // Set a fixed maximum width for the popup
-            maxHeight: 200, // Set a fixed maximum height for the popup
-            autoPan: true, // Ensure the popup pans into view
-            keepInView: true // Keeps the popup in view when zooming
+            maxWidth: 200, // Set a fixed maximum width for the popup
+            maxHeight: 100, // Set a fixed maximum height for the popup
         })
         .openPopup();
 }
