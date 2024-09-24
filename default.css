@@ -55,7 +55,7 @@ body, html {
     box-sizing: border-box;
     flex-grow: 0; /* Prevent growing */
     overflow-y: auto; /* Enable scrolling if content overflows */
-    border-right:  2px solid #040000;
+    border-right:  1px solid #040000;
 }
 
 #auditor-display-container {
@@ -229,9 +229,18 @@ body, html {
 #county-select {
     margin-bottom: 20px;
     font-size: 1.0em;
-    height: 2.5em;
+    height: auto; /* Allow height to adjust based on content */
     width: 100%;
     box-sizing: border-box;
+    overflow-y: auto; /* Add vertical scroll if the content exceeds the dropdown height */
+    max-height: 200px; /* Set a max-height to ensure dropdown doesn't get too large */
+}
+
+@media (max-width: 600px) { /* Adjust styles for mobile screens */
+    #county-select {
+        font-size: 0.8em; /* Smaller font size for mobile */
+        max-height: 300px; /* Increase max-height for mobile if needed */
+    }
 }
 
 #legend h4 {
