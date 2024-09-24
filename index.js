@@ -546,21 +546,25 @@ function createLayersLegend() {
     ELEMENTS.layersLegend.innerHTML = legendContent;
 }
 
-
 function createIconLegend() {    
     ELEMENTS.iconLegend.innerHTML = '';
 
     const iconLegendContent = `
         <div class="info icon-legend">
-            <img src="${ICON_PATHS.POLLING_LOCATION}" style="width: 25px; height: 25px; margin-right: 4px;"> Polling place<br>
-            <img src="${ICON_PATHS.HIGHLIGHTED_POLLING_LOCATION}" style="width: 25px; height: 25px; margin-right: 4px;"> Polling place for selected precinct <br>
-            <div class="icon-legend-item post-office">
-                <img src="${ICON_PATHS.POST_OFFICE}" style="width: 25px; height: 25px; margin-right: 4px;"> Post office
+            <div class="legend-item">
+                <img src="${ICON_PATHS.POLLING_LOCATION}" class="legend-icon" alt="Polling place"> Polling place
+            </div>
+            <div class="legend-item">
+                <img src="${ICON_PATHS.HIGHLIGHTED_POLLING_LOCATION}" class="legend-icon" alt="Polling place for selected precinct"> Polling place for selected precinct
+            </div>
+            <div class="legend-item">
+                <img src="${ICON_PATHS.POST_OFFICE}" class="legend-icon" alt="Post office"> Post office
             </div>
         </div>`;
 
     ELEMENTS.iconLegend.innerHTML = iconLegendContent;
 }
+
 
 // Initialization
 initMap(46.8772, -96.7898, 7);

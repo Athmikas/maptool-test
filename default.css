@@ -19,12 +19,6 @@ body, html {
     box-sizing: border-box;
 }
 
-@media (max-width: 600px) {
-    .icon-legend-item.post-office {
-        display: none;
-    }
-}
-
 /* Information Panel */
 #information-panel {
     height: auto;
@@ -139,6 +133,9 @@ body, html {
     #legend h4 {
         font-size: 0.7em;
     }
+    #checkbox-container h5 {
+        font-size: 0.7em;
+    }
 }
 
 /* Legend Items */
@@ -169,13 +166,7 @@ body, html {
     display: inline-block;
 }
 
-/* Hide Specific Legend Items on Mobile */
-@media (max-width: 600px) {
-    .legend-item.legislative,
-    .legend-item.tribal {
-        display: none;
-    }
-}
+
 
 /* General Styles for Legend Items */
 .legend-items,
@@ -188,7 +179,7 @@ body, html {
     .legend-items,
     #icon-legend,
     #layers-legend {
-        font-size: 0.6em;
+        font-size: 0.5em;
     }
 }
 
@@ -296,13 +287,14 @@ body, html {
 #county-select {
     margin-bottom: 5px;
     font-size: 1.0em;
-    height: auto;
+    height: 30px;
     width: 100%;
     box-sizing: border-box;
     max-height: 200px;
     overflow-y: auto;
     white-space: normal;
     display: block;
+    margin-bottom: 15px;
 }
 
 @media (max-width: 600px) {
@@ -310,17 +302,11 @@ body, html {
         font-size: 0.7em;
         max-height: 300px;
     }
-}
-
-/* Hide Elements on Mobile */
-@media (max-width: 600px) {
-    #select-layers,
-    #precincts-label,
-    #legend-items,
     #checkbox-container label {
-        display: none;
+        font-size: 0.5em;
     }
 }
+
 
 /* Default styles for desktop */
 .leaflet-popup-content {
@@ -365,8 +351,31 @@ body, html {
     margin-top: 1%;
 }
 
+.icon-legend .legend-item {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+    margin-bottom: 8px; /* Space between legend items */
+}
+
+.legend-icon {
+    width: 25px; 
+    height: 25px; 
+    margin-right: 8px; /* Space between the icon and the text */
+    flex-shrink: 0; /* Prevents the icon from shrinking */
+}
+
+@media (max-width: 600px) {
+    .legend-icon {
+        width: 18px; /* Smaller size for mobile screens */
+        height: 18px; 
+    }
+}
+
+
 /* Apply max-width to all elements to prevent overflow */
 * {
     max-width: 100vw;
     box-sizing: border-box;
 }
+
+
